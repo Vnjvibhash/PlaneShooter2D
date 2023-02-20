@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Plane Shooter 2D</string>
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
+    <string name="splash_content">Plane Shooter\nGame</string>
+    <string name="adMobId">ca-app-pub-9135883475974820~3596887705</string>
+    <string name="bannerAdsId">ca-app-pub-9135883475974820/9836661296</string>
+    <string name="mainBannerAdsId">ca-app-pub-9135883475974820/2001299654</string>
+    <string name="gameOverBannerAdsId">ca-app-pub-9135883475974820/8646351631</string>
+    <string name="gameOverBannerTopAdsId">ca-app-pub-9135883475974820/5227062942</string>
+    <string name="appOpenAdsId">ca-app-pub-9135883475974820/4483158613</string>
+    <string name="interstitialAdsId">ca-app-pub-9135883475974820/6691090379</string>
+    <string name="gameOverInterstitialAdsId">ca-app-pub-9135883475974820/2293514515</string>
+    <string name="gameOverNativeAdsId">ca-app-pub-9135883475974820/9529840855</string>
+</resources>
