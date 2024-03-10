@@ -1,6 +1,12 @@
 # Plane Shooter - 2D Game
 
-## App link: https://play.google.com/store/apps/details?id=in.innovateria.planeshooterGame
+## Install this App from Google PayStore.
+
+[<img alt="Get it on Google Play" height="80" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png">](https://play.google.com/store/apps/details?id=in.innovateria.planeshooterGame)
+
+```
+  https://play.google.com/store/apps/details?id=in.innovateria.planeshooterGame&hl=en_IN&gl=US
+```
 
 ## Getting started
 
