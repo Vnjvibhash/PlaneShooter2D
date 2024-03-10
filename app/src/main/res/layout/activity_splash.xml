@@ -1,23 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ /*
+  ~ *  Created by VnjVibhash on 3/10/24, 5:32 PM
+  ~ *  Copyright Ⓒ 2024. All rights reserved Ⓒ 2024 http://vivekajee.in/
+  ~ *  Last modified: 3/10/24, 5:32 PM
+  ~ *
+  ~ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+  ~ *  except in compliance with the License. You may obtain a copy of the License at
+  ~ *  http://www.apache.org/licenses/LICENS... Unless required by applicable law or agreed to in writing, software
+  ~ *   distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+  ~ *   either express or implied. See the License for the specific language governing permissions and
+  ~ *   limitations under the License.
+  ~ */
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SplashActivity"
+    android:background="@drawable/splash"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@drawable/splash">
+    tools:context=".SplashActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start">
+
         <pl.droidsonroids.gif.GifImageView
             android:id="@+id/img"
-            android:layout_marginStart="-72dp"
             android:layout_width="wrap_content"
             android:layout_height="200dp"
+            android:layout_marginStart="-72dp"
             android:scaleX="-1"
             android:src="@drawable/splash_design" />
     </LinearLayout>
@@ -27,10 +42,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/splash_content"
-        android:textAllCaps="true"
         android:textAlignment="center"
+        android:textAllCaps="true"
         android:textColor="@color/white"
-        android:textStyle="bold|italic"/>
+        android:textStyle="bold|italic" />
 
 
 </LinearLayout>

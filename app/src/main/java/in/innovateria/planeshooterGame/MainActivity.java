@@ -1,12 +1,27 @@
-package in.innovateria.planeshooterGame;
+/*
+ *
+ *   Created by VnjVibhash on 3/10/24, 5:32 PM
+ *   Copyright Ⓒ 2024. All rights reserved Ⓒ 2024 http://vivekajee.in/
+ *   Last modified: 3/10/24, 5:32 PM
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ *   except in compliance with the License. You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENS... Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ *    either express or implied. See the License for the specific language governing permissions and
+ *    limitations under the License.
+ * /
+ */
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+package in.innovateria.planeshooterGame;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -46,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         mAdView = findViewById(R.id.adView);
         mAdView.loadAd(adRequest);
 
-        InterstitialAd.load(this,getString(R.string.interstitialAdsId), adRequest,
+        InterstitialAd.load(this, getString(R.string.interstitialAdsId), adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -63,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onAdDismissedFullScreenContent() {
                                 super.onAdDismissedFullScreenContent();
-                                Intent intent = new Intent(MainActivity.this,StartGameActivity.class);
+                                Intent intent = new Intent(MainActivity.this, StartGameActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
@@ -98,10 +113,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void startGame(View v) {
         Log.i("ImageButton", "clicked");
-        if(mInterstitialAd!=null)
+        if (mInterstitialAd != null)
             mInterstitialAd.show(MainActivity.this);
-        else{
-            Intent intent = new Intent(MainActivity.this,StartGameActivity.class);
+        else {
+            Intent intent = new Intent(MainActivity.this, StartGameActivity.class);
             startActivity(intent);
             finish();
         }

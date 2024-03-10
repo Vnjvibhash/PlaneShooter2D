@@ -1,3 +1,18 @@
+/*
+ *
+ *   Created by VnjVibhash on 3/10/24, 5:32 PM
+ *   Copyright Ⓒ 2024. All rights reserved Ⓒ 2024 http://vivekajee.in/
+ *   Last modified: 3/10/24, 5:32 PM
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ *   except in compliance with the License. You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENS... Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ *    either express or implied. See the License for the specific language governing permissions and
+ *    limitations under the License.
+ * /
+ */
+
 package in.innovateria.planeshooterGame;
 
 import android.app.Activity;
@@ -13,7 +28,6 @@ import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,32 +35,43 @@ import android.view.View;
 import java.util.ArrayList;
 
 public class GameView extends View {
-    Bitmap background, tank,lifeImage;
-    Rect rect;
-    private int tankX;
+    private static final long FIRE_DELAY = 250;
     static int dWidth, dHeight;
+    static int tankWidth, tankHeight;
+    final long UPDATE_MILLIS = 30;
+    final int TEXT_SIZE = 52;
+    private final Missile missile;
+    Bitmap background, tank, lifeImage;
+    Rect rect;
     ArrayList<Plane> planes, planes2;
     ArrayList<Missile> missiles;
     ArrayList<Explosion> explosions;
     Handler handler;
     Runnable runnable;
-    final long UPDATE_MILLIS = 30;
-    static int tankWidth, tankHeight;
     Context context;
     int count = 0;
     SoundPool sp;
     int fire = 0, point = 0;
     Paint scorePaint, healthPaint;
-    final int TEXT_SIZE = 52;
     int life = 10;
-
-    private Missile missile;
+    private int tankX;
     private boolean isFiring = false;
-    private static final long FIRE_DELAY = 250;
     private int missileWidth;
-    private int missileHeight;
     int initialX = tankX + tankWidth / 2 - missileWidth / 2;
+    private int missileHeight;
     int initialY = dHeight - tankHeight - missileHeight / 2;
+    private final Runnable fireRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isFiring) {
+                fireMissile();
+                // Schedule the next missile firing if the game is not over
+                if (!isGameOver()) {
+                    handler.postDelayed(this, FIRE_DELAY);
+                }
+            }
+        }
+    };
 
     public GameView(Context context) {
         super(context);
@@ -149,92 +174,91 @@ public class GameView extends View {
                         <= (planes.get(0).planeX + planes.get(0).getWidth()) && missiles.get(i).y >= planes.get(0).planeY &&
                         missiles.get(i).y <= (planes.get(0).planeY + planes.get(0).getHeight())) {
                     Explosion explosion = new Explosion(context);
-                    explosion.explosionX = planes.get(0).planeX + planes.get(0).getWidth()/2 - explosion.getExplosionWidth()/2;
-                    explosion.explosionY = planes.get(0).planeY + planes.get(0).getHeight()/2 - explosion.getExplosionHeight()/2;
+                    explosion.explosionX = planes.get(0).planeX + planes.get(0).getWidth() / 2 - explosion.getExplosionWidth() / 2;
+                    explosion.explosionY = planes.get(0).planeY + planes.get(0).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
                     planes.get(0).resetPosition();
                     count++;
                     missiles.remove(i);
-                    if(point != 0){
+                    if (point != 0) {
                         sp.play(point, 1, 1, 0, 0, 1);
                     }
-                    if(count%50==0){
-                        if(life<5)
-                            life=5;
+                    if (count % 50 == 0) {
+                        if (life < 5)
+                            life = 5;
                     }
 
-                }else if (missiles.get(i).x >= planes.get(1).planeX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
+                } else if (missiles.get(i).x >= planes.get(1).planeX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
                         <= (planes.get(1).planeX + planes.get(1).getWidth()) && missiles.get(i).y >= planes.get(1).planeY &&
                         missiles.get(i).y <= (planes.get(1).planeY + planes.get(1).getHeight())) {
                     Explosion explosion = new Explosion(context);
-                    explosion.explosionX = planes.get(1).planeX + planes.get(1).getWidth()/2 - explosion.getExplosionWidth()/2;
-                    explosion.explosionY = planes.get(1).planeY + planes.get(1).getHeight()/2 - explosion.getExplosionHeight()/2;
+                    explosion.explosionX = planes.get(1).planeX + planes.get(1).getWidth() / 2 - explosion.getExplosionWidth() / 2;
+                    explosion.explosionY = planes.get(1).planeY + planes.get(1).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
                     planes.get(1).resetPosition();
                     count++;
                     missiles.remove(i);
-                    if(point != 0){
+                    if (point != 0) {
                         sp.play(point, 1, 1, 0, 0, 1);
                     }
-                    if(count%50==0){
-                        if(life<5)
-                            life=5;
+                    if (count % 50 == 0) {
+                        if (life < 5)
+                            life = 5;
                     }
-                }else if (missiles.get(i).x >= planes2.get(0).planeX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
+                } else if (missiles.get(i).x >= planes2.get(0).planeX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
                         <= (planes2.get(0).planeX + planes2.get(0).getWidth()) && missiles.get(i).y >= planes2.get(0).planeY &&
                         missiles.get(i).y <= (planes2.get(0).planeY + planes2.get(0).getHeight())) {
                     Explosion explosion = new Explosion(context);
-                    explosion.explosionX = planes2.get(0).planeX + planes2.get(0).getWidth()/2 - explosion.getExplosionWidth()/2;
-                    explosion.explosionY = planes2.get(0).planeY + planes2.get(0).getHeight()/2 - explosion.getExplosionHeight()/2;
+                    explosion.explosionX = planes2.get(0).planeX + planes2.get(0).getWidth() / 2 - explosion.getExplosionWidth() / 2;
+                    explosion.explosionY = planes2.get(0).planeY + planes2.get(0).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
                     planes2.get(0).resetPosition();
                     count++;
                     missiles.remove(i);
-                    if(point != 0){
+                    if (point != 0) {
                         sp.play(point, 1, 1, 0, 0, 1);
                     }
-                    if(count%50==0){
-                        if(life<5)
-                            life=5;
+                    if (count % 50 == 0) {
+                        if (life < 5)
+                            life = 5;
                     }
-                }else if (missiles.get(i).x >= planes2.get(1).planeX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
+                } else if (missiles.get(i).x >= planes2.get(1).planeX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
                         <= (planes2.get(1).planeX + planes2.get(1).getWidth()) && missiles.get(i).y >= planes2.get(1).planeY &&
                         missiles.get(i).y <= (planes2.get(1).planeY + planes2.get(1).getHeight())) {
                     Explosion explosion = new Explosion(context);
-                    explosion.explosionX = planes2.get(1).planeX + planes2.get(1).getWidth()/2 - explosion.getExplosionWidth()/2;
-                    explosion.explosionY = planes2.get(1).planeY + planes2.get(1).getHeight()/2 - explosion.getExplosionHeight()/2;
+                    explosion.explosionX = planes2.get(1).planeX + planes2.get(1).getWidth() / 2 - explosion.getExplosionWidth() / 2;
+                    explosion.explosionY = planes2.get(1).planeY + planes2.get(1).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
                     planes2.get(1).resetPosition();
                     count++;
                     missiles.remove(i);
-                    if(point != 0){
+                    if (point != 0) {
                         sp.play(point, 1, 1, 0, 0, 1);
                     }
-                    if(count%50==0){
-                        if(life<5)
-                            life=5;
+                    if (count % 50 == 0) {
+                        if (life < 5)
+                            life = 5;
                     }
                 }
             } else {
                 missiles.remove(i);
             }
         }
-        for(int j=0; j<explosions.size(); j++){
+        for (int j = 0; j < explosions.size(); j++) {
             canvas.drawBitmap(explosions.get(j).getExplosion(explosions.get(j).explosionFrame), explosions.get(j).explosionX,
                     explosions.get(j).explosionY, null);
             explosions.get(j).explosionFrame++;
-            if(explosions.get(j).explosionFrame > 8){
+            if (explosions.get(j).explosionFrame > 8) {
                 explosions.remove(j);
             }
         }
         canvas.drawBitmap(tank, tankX, dHeight - tankHeight, null);
         canvas.drawText("Point: " + (count * 10), 10, TEXT_SIZE, scorePaint);
-        for(int i=life; i>=1; i--){
+        for (int i = life; i >= 1; i--) {
             canvas.drawBitmap(lifeImage, dWidth - lifeImage.getWidth() * i, 0, null);
         }
         handler.postDelayed(runnable, UPDATE_MILLIS);
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -294,19 +318,6 @@ public class GameView extends View {
             sp.stop(fire);
         }
     }
-
-    private Runnable fireRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (isFiring) {
-                fireMissile();
-                // Schedule the next missile firing if the game is not over
-                if (!isGameOver()) {
-                    handler.postDelayed(this, FIRE_DELAY);
-                }
-            }
-        }
-    };
 
     private boolean isGameOver() {
         return life == 0;
