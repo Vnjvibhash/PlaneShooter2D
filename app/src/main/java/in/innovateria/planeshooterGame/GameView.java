@@ -23,6 +23,7 @@ import java.util.ArrayList;
 public class GameView extends View {
     Bitmap background, tank,lifeImage;
     Rect rect;
+    private int tankX;
     static int dWidth, dHeight;
     ArrayList<Plane> planes, planes2;
     ArrayList<Missile> missiles;
@@ -38,6 +39,14 @@ public class GameView extends View {
     Paint scorePaint, healthPaint;
     final int TEXT_SIZE = 52;
     int life = 10;
+
+    private Missile missile;
+    private boolean isFiring = false;
+    private static final long FIRE_DELAY = 250;
+    private int missileWidth;
+    private int missileHeight;
+    int initialX = tankX + tankWidth / 2 - missileWidth / 2;
+    int initialY = dHeight - tankHeight - missileHeight / 2;
 
     public GameView(Context context) {
         super(context);
@@ -55,6 +64,12 @@ public class GameView extends View {
         planes2 = new ArrayList<>();
         missiles = new ArrayList<>();
         explosions = new ArrayList<>();
+
+        // Initialize missile dimensions
+        missile = new Missile(context, initialX, initialY);
+        missileWidth = missile.getMissileWidth();
+        missileHeight = missile.getMissileHeight();
+
         for (int i = 0; i < 2; i++) {
             Plane plane = new Plane(context);
             planes.add(plane);
@@ -85,33 +100,40 @@ public class GameView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawBitmap(background, null, rect, null);
+
+        // Update plane position
         for (int i = 0; i < planes.size(); i++) {
             canvas.drawBitmap(planes.get(i).getBitmap(), planes.get(i).planeX, planes.get(i).planeY, null);
             planes.get(i).planeFrame++;
+            // Update plane1 position
+            planes.get(i).planeX -= planes.get(i).velocity;
             if (planes.get(i).planeFrame > 14) {
                 planes.get(i).planeFrame = 0;
             }
-            planes.get(i).planeX -= planes.get(i).velocity;
+            // Reset if plane1 moves off the screen
             if (planes.get(i).planeX < -planes.get(i).getWidth()) {
                 planes.get(i).resetPosition();
                 life--;
-                if(life == 0){
+                if (life == 0) {
                     Intent intent = new Intent(context, GameOverActivity.class);
                     intent.putExtra("score", (count * 10));
                     context.startActivity(intent);
                     ((Activity) context).finish();
                 }
             }
+
             canvas.drawBitmap(planes2.get(i).getBitmap(), planes2.get(i).planeX, planes2.get(i).planeY, null);
             planes2.get(i).planeFrame++;
             if (planes2.get(i).planeFrame > 9) {
                 planes2.get(i).planeFrame = 0;
             }
+            // Update plane2 position
             planes2.get(i).planeX += planes2.get(i).velocity;
+            // Reset if plane2 moves off the screen
             if (planes2.get(i).planeX > (dWidth + planes2.get(i).getWidth())) {
                 planes2.get(i).resetPosition();
                 life--;
-                if(life == 0){
+                if (life == 0) {
                     Intent intent = new Intent(context, GameOverActivity.class);
                     intent.putExtra("score", (count * 10));
                     context.startActivity(intent);
@@ -205,7 +227,7 @@ public class GameView extends View {
                 explosions.remove(j);
             }
         }
-        canvas.drawBitmap(tank, (dWidth / 2 - tankWidth / 2), dHeight - tankHeight, null);
+        canvas.drawBitmap(tank, tankX, dHeight - tankHeight, null);
         canvas.drawText("Point: " + (count * 10), 10, TEXT_SIZE, scorePaint);
         for(int i=life; i>=1; i--){
             canvas.drawBitmap(lifeImage, dWidth - lifeImage.getWidth() * i, 0, null);
@@ -213,23 +235,96 @@ public class GameView extends View {
         handler.postDelayed(runnable, UPDATE_MILLIS);
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float touchX = event.getX();
         float touchY = event.getY();
         int action = event.getAction();
-        if (action == MotionEvent.ACTION_DOWN) {
-            if (touchX >= (dWidth / 2 - tankWidth / 2) && touchX <= (dWidth / 2 + tankWidth / 2) && touchY >= (dHeight - tankHeight)) {
-                Log.i("Tank", "is tapped");
-                if (missiles.size() < 3) {
-                    Missile m = new Missile(context);
-                    missiles.add(m);
-                    if(fire != 0){
-                        sp.play(fire, 1, 1, 0, 0, 1);
-                    }
+
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                // Check if touch is on the tank
+                if (isTouchOnTank(touchX, touchY)) {
+                    isFiring = true;
+                    startFiring();
                 }
-            }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                // Move the tank
+                moveTank(touchX);
+                break;
+            case MotionEvent.ACTION_UP:
+                // Stop firing when touch is released
+                isFiring = false;
+                break;
         }
         return true;
     }
+
+    private boolean isTouchOnTank(float touchX, float touchY) {
+        return touchX >= tankX && touchX <= tankX + tankWidth &&
+                touchY >= dHeight - tankHeight;
+    }
+
+    private void moveTank(float touchX) {
+        // Calculate the new position of the tank based on touch input
+        int newTankX = (int) (touchX - tankWidth / 2);
+
+        // Ensure the tank stays within the screen boundaries
+        if (newTankX < 0) {
+            tankX = 0;
+        } else if (newTankX + tankWidth > dWidth) {
+            tankX = dWidth - tankWidth;
+        } else {
+            tankX = newTankX;
+        }
+    }
+
+    private void startFiring() {
+        // Start firing missiles continuously
+        handler.post(fireRunnable);
+    }
+
+    private void stopFiring() {
+        // Stop firing missiles
+        handler.removeCallbacks(fireRunnable);
+
+        if (fire != 0) {
+            sp.stop(fire);
+        }
+    }
+
+    private Runnable fireRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isFiring) {
+                fireMissile();
+                // Schedule the next missile firing if the game is not over
+                if (!isGameOver()) {
+                    handler.postDelayed(this, FIRE_DELAY);
+                }
+            }
+        }
+    };
+
+    private boolean isGameOver() {
+        return life == 0;
+    }
+
+
+    private void fireMissile() {
+        // Fire a missile from the tank's position
+        int missileX = tankX + tankWidth / 2 - missileWidth / 2;
+        int missileY = dHeight - tankHeight - missileHeight / 2;
+        Missile missile = new Missile(getContext(), missileX, missileY);
+        missiles.add(missile);
+        // Play missile firing sound if available
+        if (fire != 0) {
+            sp.play(fire, 1, 1, 0, 0, 1);
+        }
+        sp.stop(fire);
+        invalidate(); // Redraw the view
+    }
+
 }
