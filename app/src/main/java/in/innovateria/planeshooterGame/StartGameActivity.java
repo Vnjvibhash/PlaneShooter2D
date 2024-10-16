@@ -22,10 +22,6 @@ import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 
-/**
- * Created by Recording on 8/16/2017.
- */
-
 public class StartGameActivity extends Activity {
 
     GameView gameView;

@@ -47,16 +47,6 @@
             android:onClick="exit" />
     </LinearLayout>
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adViewTop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btm_section"
-        android:layout_centerHorizontal="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/gameOverBannerTopAdsId" />
-
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -114,14 +104,5 @@
             android:layout_height="wrap_content"
             android:background="@drawable/game_over" />
     </LinearLayout>
-
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/gameOverBannerAdsId" />
 
 </RelativeLayout>

@@ -22,15 +22,6 @@
     android:background="@drawable/background"
     tools:context=".MainActivity">
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adViewTop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/bannerAdsId" />
-
     <ImageButton
         android:id="@+id/imageButton"
         android:layout_width="wrap_content"
@@ -49,14 +40,5 @@
         android:text="Start Game"
         android:textColor="@android:color/holo_red_dark"
         android:textSize="30sp" />
-
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/mainBannerAdsId" />
 
 </RelativeLayout>
