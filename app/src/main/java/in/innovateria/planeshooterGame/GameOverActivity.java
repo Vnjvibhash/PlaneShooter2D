@@ -43,8 +43,8 @@ public class GameOverActivity extends AppCompatActivity {
             editor.putInt("scoreSP", scoreSP);
             editor.commit();
         }
-        tvScore = (TextView) findViewById(R.id.tvScore);
-        tvPersonalBest = (TextView) findViewById(R.id.tvPersonalBest);
+        tvScore = findViewById(R.id.tvScore);
+        tvPersonalBest = findViewById(R.id.tvPersonalBest);
         tvScore.setText("" + score);
         tvPersonalBest.setText("" + scoreSP);
     }
